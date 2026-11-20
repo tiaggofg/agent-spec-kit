@@ -56,7 +56,7 @@ Siga estritamente `.agents/rules/post-implementation-testing.md` e os comandos d
    - Execute toda a suíte de testes e build das camadas alteradas (Backend, Frontend, testes de arquitetura/contrato, lint/typecheck).
 2. **Validação Prática Real (Obrigatória)**:
    - Suba os serviços necessários do projeto (banco, backend, frontend) para validação real.
-   - **Se tocou Frontend ou Full-Stack**: execute validação E2E real via **Playwright** em mobile e desktop cobrindo todos os fluxos e estados da spec, inspecionando visualmente screenshots, layout/overflow e ausência de erros no console.
+   - **Se tocou Frontend ou Full-Stack**: execute validação E2E real via **Playwright** (MCP Playwright, subagente `browser` ou script headless) em mobile e desktop cobrindo todos os fluxos e estados da spec, inspecionando visualmente screenshots, layout/overflow e ausência de erros no console.
    - **Se tocou Somente Backend**: execute requisições HTTP reais (`curl` / script) contra a API em execução validando payloads, autenticação, status codes (sucesso + erro) e persistência.
    - **Se tocou CLI / Script / Biblioteca**: execute comandos reais cobrindo casos de sucesso e erro.
    - Remova artefatos/screenshots temporários de validação e encerre processos daemons temporários ao finalizar.

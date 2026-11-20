@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DEFAULT_REPO="https://github.com/tiaggofg/agent-spec-kit.git"
+DEFAULT_REPO="git@github.com:tiaggofg/agent-spec-kit.git"
 DEFAULT_REF="main"
-DEFAULT_IDES="claude,cursor,windsurf"
+DEFAULT_IDES="none"
 
 TARGET_DIR="."
 REPO_URL=""
@@ -24,7 +24,7 @@ Options:
   --target <dir>       Target project directory (default: .)
   --repo <git-url>     Git repository URL of agent-spec-kit
   --ref <branch|tag>   Git branch or tag to fetch (default: main)
-  --ides <csv>         Comma-separated IDE skill dirs to sync: claude,cursor,windsurf (default: claude,cursor,windsurf)
+  --ides <csv>         Extra IDE skill dirs to mirror: claude,cursor,windsurf,all,none (default: none; .agents/ is always synced for Antigravity)
   --local <dir>        Use a local agent-spec-kit directory instead of cloning from Git
   --dry-run            Show planned actions without modifying any files
   --force-templates    Overwrite AGENTS.md and .specs/STATE.md even if they already exist
@@ -175,22 +175,28 @@ for rule in "$KIT_DIR"/core/.agents/rules/*.md; do
   sync_item "$rule" "$TARGET_DIR/.agents/rules/$(basename "$rule")"
 done
 
-# 2. Sync .agents/skills/
-for skill in "$KIT_DIR"/core/.agents/skills/*; do
+# 2. Sync .agents/skills/ (Antigravity primary discovery: all kit skills)
+for skill in "$KIT_DIR"/core/.agents/skills/* "$KIT_DIR"/core/skills/*; do
   [[ -d "$skill" ]] || continue
   sync_item "$skill" "$TARGET_DIR/.agents/skills/$(basename "$skill")"
 done
 
-# 3. Sync multi-IDE skills (.claude, .cursor, .windsurf)
-IFS=',' read -ra IDE_LIST <<< "$IDES"
-for ide in "${IDE_LIST[@]}"; do
-  ide_trimmed="$(echo "$ide" | tr -d '[:space:]')"
-  [[ -z "$ide_trimmed" ]] && continue
-  for skill in "$KIT_DIR"/core/skills/*; do
-    [[ -d "$skill" ]] || continue
-    sync_item "$skill" "$TARGET_DIR/.$ide_trimmed/skills/$(basename "$skill")"
+# 3. Sync optional extra IDE mirrors (.claude, .cursor, .windsurf)
+if [[ "$IDES" == "all" ]]; then
+  IDES="claude,cursor,windsurf"
+fi
+
+if [[ "$IDES" != "none" && -n "$IDES" ]]; then
+  IFS=',' read -ra IDE_LIST <<< "$IDES"
+  for ide in "${IDE_LIST[@]}"; do
+    ide_trimmed="$(echo "$ide" | tr -d '[:space:]')"
+    [[ -z "$ide_trimmed" || "$ide_trimmed" == "none" ]] && continue
+    for skill in "$KIT_DIR"/core/skills/* "$KIT_DIR"/core/.agents/skills/*; do
+      [[ -d "$skill" ]] || continue
+      sync_item "$skill" "$TARGET_DIR/.$ide_trimmed/skills/$(basename "$skill")"
+    done
   done
-done
+fi
 
 # 4. Copy project-owned templates ONLY if missing (unless --force-templates)
 copy_template_if_missing() {
@@ -245,7 +251,7 @@ CONFIG_FILE="$TARGET_DIR/.spec-kit.json"
 REPO_URL="$(sed -nE 's/.*"repo"[[:space:]]*:[[:space:]]*"([^"]*)".*/\1/p' "$CONFIG_FILE" | head -n 1)"
 REF="$(sed -nE 's/.*"ref"[[:space:]]*:[[:space:]]*"([^"]*)".*/\1/p' "$CONFIG_FILE" | head -n 1)"
 
-REPO_URL="${REPO_URL:-https://github.com/tiaggofg/agent-spec-kit.git}"
+REPO_URL="${REPO_URL:-git@github.com:tiaggofg/agent-spec-kit.git}"
 REF="${REF:-main}"
 
 LOCAL_KIT=""

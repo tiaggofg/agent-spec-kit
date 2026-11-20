@@ -7,7 +7,7 @@ trigger: always_on
 Após finalizar qualquer implementação, refatoração funcional ou correção de bug neste projeto, você **DEVE** validar a entrega executando testes reais de acordo com o escopo da alteração:
 
 ## 1. Alterações com Frontend ou Full-Stack (UI + API)
-- Sempre que uma implementação envolver o **Frontend** (ou **Frontend + Backend**), após rodar os testes unitários e build do projeto (conforme `AGENTS.md`), execute um **teste fim a fim via Playwright** (utilizando script Playwright ou o agente de navegador) sobre a aplicação em execução.
+- Sempre que uma implementação envolver o **Frontend** (ou **Frontend + Backend**), após rodar os testes unitários e build do projeto (conforme `AGENTS.md`), execute um **teste fim a fim via Playwright** (via MCP Playwright, subagente `browser` no Antigravity ou script Playwright headless) sobre a aplicação em execução.
 - Verifique na prática a renderização dos componentes, interações de clique/preenchimento, navegação entre rotas da aplicação, fluxos críticos de negócio, responsividade (mobile e desktop) e respostas reais da API, sem erros no console.
 
 ## 2. Alterações Exclusivamente no Backend (Somente Backend)

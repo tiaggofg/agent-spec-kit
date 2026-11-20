@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0] - 2026-11-20
+
+### Changed
+- **Antigravity-first discovery**: `scripts/install.sh` now syncs **all** kit skills (`tlc-spec-driven`, `domain-analysis`, `tactical-ddd`, `the-judge`, `frontend-design`, `web-design-guidelines`, `figma-implement-design`, `implement-spec-tasks`, `grill-me`, `grilling`) into `.agents/skills/` so Antigravity discovers them natively.
+- Default `--ides` changed to `none` (clean `.agents/`-only setup for Antigravity), while preserving `--ides claude,cursor,windsurf` or `--ides all` for multi-IDE compatibility.
+- Default repository URL updated to `git@github.com:tiaggofg/agent-spec-kit.git`.
+- Updated `post-implementation-testing.md` and `implement-spec-tasks/SKILL.md` to reference Antigravity `browser` subagent / Playwright MCP alongside headless Playwright scripts.
+
 ## [1.0.0] - 2026-11-20
 
 ### Added
