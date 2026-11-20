@@ -243,6 +243,18 @@ copy_template_if_missing "$KIT_DIR/templates/.specs/STATE.md" "$TARGET_DIR/.spec
 if [[ "$SKIP_TOOLS" != "true" ]]; then
   copy_template_if_missing "$KIT_DIR/templates/.sonarqube/docker-compose.yml" "$TARGET_DIR/.sonarqube/docker-compose.yml"
   copy_template_if_missing "$KIT_DIR/templates/.sonarqube/.gitignore" "$TARGET_DIR/.sonarqube/.gitignore"
+  copy_template_if_missing "$KIT_DIR/templates/.github/workflows/release.yml" "$TARGET_DIR/.github/workflows/release.yml"
+  copy_template_if_missing "$KIT_DIR/templates/release-please-config.json" "$TARGET_DIR/release-please-config.json"
+  copy_template_if_missing "$KIT_DIR/templates/.release-please-manifest.json" "$TARGET_DIR/.release-please-manifest.json"
+
+  if [[ "$DRY_RUN" != "true" && -d "$TARGET_DIR/.git/hooks" && ! -f "$TARGET_DIR/.git/hooks/commit-msg" ]]; then
+    cat > "$TARGET_DIR/.git/hooks/commit-msg" <<'HOOK'
+#!/usr/bin/env bash
+exec "$(git rev-parse --show-toplevel)/.agents/scripts/validate-commit-msg.sh" "$1"
+HOOK
+    chmod +x "$TARGET_DIR/.git/hooks/commit-msg"
+    echo "  [hook] $TARGET_DIR/.git/hooks/commit-msg"
+  fi
 
   SONAR_PROPS="$TARGET_DIR/sonar-project.properties"
   if [[ ! -f "$SONAR_PROPS" || "$FORCE_TEMPLATES" == "true" ]]; then

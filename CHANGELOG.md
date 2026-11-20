@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.0] - 2026-11-20
+
+### Added
+- **Angular Conventional Commits rule & validator**: enforced via `.agents/rules/post-cycle-approval-and-docs.md` and `.agents/scripts/validate-commit-msg.sh` (header `<= 60` chars + mandatory non-empty body), with automatic `.git/hooks/commit-msg` setup when missing.
+- **Automated Changelog & Release (GitHub Actions)**: added `release-please` workflow and config both for `agent-spec-kit` itself and as project templates (`templates/.github/workflows/release.yml`, `release-please-config.json`, `.release-please-manifest.json`).
+
 ## [1.2.0] - 2026-11-20
 
 ### Added

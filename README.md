@@ -18,6 +18,7 @@ O Antigravity descobre nativamente `AGENTS.md`, `.agents/rules/*.md` e `.agents/
   - `post-cycle-approval-and-docs.md`: exige sincronização de `README.md` + `docs/` e aprovação explícita do usuário antes de `git commit` e `git push`.
 - **Scripts Determinísticos em `.agents/scripts/`**:
   - `validate-feature-name.sh`: valida nomes de pastas em `.specs/features/`.
+  - `validate-commit-msg.sh`: valida Angular Conventional Commits (título `<= 60` chars + body obrigatório); instalado também em `.git/hooks/commit-msg` quando o repo ainda não possui esse hook.
   - `quality-check.sh`: roda lint do projeto, executa `sonar-scanner` (local ou via Docker) e consulta deterministicamente o Quality Gate e issues na API do SonarQube local.
 - **Skills em `.agents/skills/`**:
   - `implement-spec-tasks`: runbook de 5 etapas para implementar uma feature aprovada a partir de `.specs/features/<feature>/tasks.md`.
@@ -34,6 +35,7 @@ O Antigravity descobre nativamente `AGENTS.md`, `.agents/rules/*.md` e `.agents/
 - `.specs/STATE.md`: memória de decisões arquiteturais (`AD-NNN`) e `## Handoff` entre sessões.
 - `.sonarqube/docker-compose.yml`: SonarQube local (`lts-community`, porta `9000`) com persistência em volume local (`.sonarqube/volumes/`).
 - `sonar-project.properties`: configuração base do projeto para o scanner.
+- `.github/workflows/release.yml`, `release-please-config.json`, `.release-please-manifest.json`: automação via **Release Please** para gerar `CHANGELOG.md`, bump de versão e GitHub Release automaticamente a partir dos Conventional Commits. *(No GitHub, habilite `Settings → Actions → General → Allow GitHub Actions to create and approve pull requests`.)*
 
 > **Garantia de atualização segura**: rodar o update **nunca sobrescreve** seu `AGENTS.md`, `.specs/STATE.md`, `.specs/features/*` ou regras/skills customizadas criadas especificamente no projeto consumidor.
 
