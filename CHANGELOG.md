@@ -1,26 +1,22 @@
 # Changelog
 
+## [1.2.0] - 2026-11-20
+
+### Added
+- **Feature folder naming rule & validator**: `.specs/features/<feature>/` must match `^[0-9]+-[a-zA-Z][a-zA-Z0-9-]*$` (e.g., `01-user-auth`), enforced via `.agents/rules/feature-naming-and-quality.md` and `.agents/scripts/validate-feature-name.sh`.
+- **Deterministic Static Analysis (Lint + Local SonarQube)**:
+  - `.agents/scripts/quality-check.sh` runs project lint checks and queries local SonarQube Quality Gate & open issues via REST API (`/api/qualitygates/project_status`, `/api/issues/search`).
+  - `templates/.sonarqube/docker-compose.yml` (`sonarqube:lts-community` with local bind-mounted volumes under `.sonarqube/volumes/`), `.sonarqube/.gitignore`, and `sonar-project.properties` template.
+  - `scripts/install.sh` sets up `.sonarqube/`, `sonar-project.properties`, `.agents/scripts/`, and checks `docker`/`python3`/`curl` availability (with `--skip-tools` and `--up-sonar` flags).
+
 ## [1.1.0] - 2026-11-20
 
 ### Changed
-- **Antigravity-first discovery**: `scripts/install.sh` now syncs **all** kit skills (`tlc-spec-driven`, `domain-analysis`, `tactical-ddd`, `the-judge`, `frontend-design`, `web-design-guidelines`, `figma-implement-design`, `implement-spec-tasks`, `grill-me`, `grilling`) into `.agents/skills/` so Antigravity discovers them natively.
+- **Antigravity-first discovery**: `scripts/install.sh` now syncs **all** kit skills into `.agents/skills/` so Antigravity discovers them natively.
 - Default `--ides` changed to `none` (clean `.agents/`-only setup for Antigravity), while preserving `--ides claude,cursor,windsurf` or `--ides all` for multi-IDE compatibility.
-- Default repository URL updated to `git@github.com:tiaggofg/agent-spec-kit.git`.
 - Updated `post-implementation-testing.md` and `implement-spec-tasks/SKILL.md` to reference Antigravity `browser` subagent / Playwright MCP alongside headless Playwright scripts.
 
 ## [1.0.0] - 2026-11-20
 
 ### Added
 - Initial extraction of the Spec-Driven Agent Harness from `secret-santa`.
-- Managed rules in `core/.agents/rules/`:
-  - `post-implementation-testing.md`
-  - `spec-handoff-only.md`
-  - `post-cycle-approval-and-docs.md`
-- Managed skills in `core/.agents/skills/`:
-  - `implement-spec-tasks` (project-agnostic 5-stage runbook)
-  - `grill-me`, `grilling`
-- Multi-IDE skills in `core/skills/` (synced to `.claude/`, `.cursor/`, `.windsurf/`):
-  - `tlc-spec-driven`, `domain-analysis`, `tactical-ddd`, `the-judge`, `frontend-design`, `web-design-guidelines`, `figma-implement-design`
-- Project templates (`templates/AGENTS.md`, `templates/.specs/STATE.md`) created only when missing.
-- `scripts/install.sh` and generated `.agents/update-spec-kit.sh` for idempotent installation and updates without clobbering project files.
-- `scripts/validate-kit.sh` for kit integrity validation.

@@ -1,0 +1,13 @@
+services:
+  sonarqube:
+    image: sonarqube:lts-community
+    container_name: local-sonarqube
+    ports:
+      - "9000:9000"
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+    volumes:
+      - ./volumes/data:/opt/sonarqube/data
+      - ./volumes/logs:/opt/sonarqube/logs
+      - ./volumes/extensions:/opt/sonarqube/extensions
+    restart: unless-stopped

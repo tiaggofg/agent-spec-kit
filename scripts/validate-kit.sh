@@ -13,12 +13,18 @@ required_files=(
   "core/.agents/rules/post-implementation-testing.md"
   "core/.agents/rules/spec-handoff-only.md"
   "core/.agents/rules/post-cycle-approval-and-docs.md"
+  "core/.agents/rules/feature-naming-and-quality.md"
+  "core/.agents/scripts/validate-feature-name.sh"
+  "core/.agents/scripts/quality-check.sh"
   "core/.agents/skills/implement-spec-tasks/SKILL.md"
   "core/.agents/skills/grill-me/SKILL.md"
   "core/.agents/skills/grilling/SKILL.md"
   "core/skills/tlc-spec-driven/SKILL.md"
   "templates/AGENTS.md"
   "templates/.specs/STATE.md"
+  "templates/.sonarqube/docker-compose.yml"
+  "templates/.sonarqube/.gitignore"
+  "templates/sonar-project.properties"
 )
 
 for f in "${required_files[@]}"; do
@@ -29,7 +35,9 @@ for f in "${required_files[@]}"; do
 done
 
 bash -n "$KIT_DIR/scripts/install.sh"
-echo "OK: install.sh bash syntax valid"
+bash -n "$KIT_DIR/core/.agents/scripts/validate-feature-name.sh"
+bash -n "$KIT_DIR/core/.agents/scripts/quality-check.sh"
+echo "OK: bash syntax valid for all scripts"
 
 if command -v python3 >/dev/null 2>&1; then
   python3 "$KIT_DIR/core/skills/tlc-spec-driven/scripts/selftest.py"

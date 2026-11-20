@@ -12,6 +12,8 @@ IDES=""
 LOCAL_KIT=""
 DRY_RUN=false
 FORCE_TEMPLATES=false
+SKIP_TOOLS=false
+UP_SONAR=false
 
 usage() {
   cat <<'EOF'
@@ -26,6 +28,8 @@ Options:
   --ref <branch|tag>   Git branch or tag to fetch (default: main)
   --ides <csv>         Extra IDE skill dirs to mirror: claude,cursor,windsurf,all,none (default: none; .agents/ is always synced for Antigravity)
   --local <dir>        Use a local agent-spec-kit directory instead of cloning from Git
+  --skip-tools         Skip .sonarqube/ and sonar-project.properties setup
+  --up-sonar           Start local SonarQube container immediately after install
   --dry-run            Show planned actions without modifying any files
   --force-templates    Overwrite AGENTS.md and .specs/STATE.md even if they already exist
   -h, --help           Show this help message
@@ -56,6 +60,14 @@ while [[ $# -gt 0 ]]; do
       ;;
     --dry-run)
       DRY_RUN=true
+      shift
+      ;;
+    --skip-tools)
+      SKIP_TOOLS=true
+      shift
+      ;;
+    --up-sonar)
+      UP_SONAR=true
       shift
       ;;
     --force-templates)
@@ -175,6 +187,16 @@ for rule in "$KIT_DIR"/core/.agents/rules/*.md; do
   sync_item "$rule" "$TARGET_DIR/.agents/rules/$(basename "$rule")"
 done
 
+# 1b. Sync .agents/scripts/
+for script in "$KIT_DIR"/core/.agents/scripts/*; do
+  [[ -e "$script" ]] || continue
+  dst_script="$TARGET_DIR/.agents/scripts/$(basename "$script")"
+  sync_item "$script" "$dst_script"
+  if [[ "$DRY_RUN" != "true" && -f "$dst_script" ]]; then
+    chmod +x "$dst_script"
+  fi
+done
+
 # 2. Sync .agents/skills/ (Antigravity primary discovery: all kit skills)
 for skill in "$KIT_DIR"/core/.agents/skills/* "$KIT_DIR"/core/skills/*; do
   [[ -d "$skill" ]] || continue
@@ -217,6 +239,25 @@ copy_template_if_missing() {
 
 copy_template_if_missing "$KIT_DIR/templates/AGENTS.md" "$TARGET_DIR/AGENTS.md"
 copy_template_if_missing "$KIT_DIR/templates/.specs/STATE.md" "$TARGET_DIR/.specs/STATE.md"
+
+if [[ "$SKIP_TOOLS" != "true" ]]; then
+  copy_template_if_missing "$KIT_DIR/templates/.sonarqube/docker-compose.yml" "$TARGET_DIR/.sonarqube/docker-compose.yml"
+  copy_template_if_missing "$KIT_DIR/templates/.sonarqube/.gitignore" "$TARGET_DIR/.sonarqube/.gitignore"
+
+  SONAR_PROPS="$TARGET_DIR/sonar-project.properties"
+  if [[ ! -f "$SONAR_PROPS" || "$FORCE_TEMPLATES" == "true" ]]; then
+    if [[ "$DRY_RUN" == "true" ]]; then
+      echo "  [init] $SONAR_PROPS"
+    else
+      PROJECT_KEY="$(basename "$TARGET_DIR" | tr -cs 'a-zA-Z0-9._-' '-' | sed 's/^-//;s/-$//')"
+      PROJECT_KEY="${PROJECT_KEY:-my-project}"
+      sed "s/__PROJECT_KEY__/${PROJECT_KEY}/g" "$KIT_DIR/templates/sonar-project.properties" > "$SONAR_PROPS"
+      echo "  [init] $SONAR_PROPS (projectKey=$PROJECT_KEY)"
+    fi
+  else
+    echo "  [keep] $SONAR_PROPS (already exists)"
+  fi
+fi
 
 if [[ "$DRY_RUN" == "true" ]]; then
   echo "  [write] $TARGET_DIR/.spec-kit.json"
@@ -282,3 +323,22 @@ chmod +x "$UPDATE_SCRIPT"
 
 echo "Done! Managed harness updated to v$KIT_VERSION."
 echo "To update this project later, run: ./.agents/update-spec-kit.sh"
+
+if [[ "$SKIP_TOOLS" != "true" ]]; then
+  echo ""
+  echo "Tooling setup:"
+  for tool in docker python3 curl; do
+    if command -v "$tool" >/dev/null 2>&1; then
+      echo "  [ok] $tool"
+    else
+      echo "  [missing] $tool (required for local SonarQube / deterministic gates)"
+    fi
+  done
+  if [[ "$UP_SONAR" == "true" ]] && command -v docker >/dev/null 2>&1; then
+    echo "Starting local SonarQube..."
+    docker compose -f "$TARGET_DIR/.sonarqube/docker-compose.yml" up -d
+  else
+    echo "  Start local SonarQube: docker compose -f .sonarqube/docker-compose.yml up -d"
+  fi
+  echo "  Run quality gate:      ./.agents/scripts/quality-check.sh --up"
+fi

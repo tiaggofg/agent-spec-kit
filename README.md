@@ -13,8 +13,12 @@ O Antigravity descobre nativamente `AGENTS.md`, `.agents/rules/*.md` e `.agents/
 
 - **Regras em `.agents/rules/`** (`trigger: always_on`):
   - `spec-handoff-only.md`: separa a sessão de planejamento (Spec + Tasks + Handoff) da sessão de implementação.
+  - `feature-naming-and-quality.md`: exige padrão `[0-9]+-[a-zA-Z][a-zA-Z0-9-]*` nas pastas de `.specs/features/` e análise estática determinística (Lint + SonarQube local).
   - `post-implementation-testing.md`: exige validação prática real após mudanças (Playwright via MCP/subagente `browser`/script para UI/Full-Stack, requests HTTP reais para Backend-only, execução real para CLI).
   - `post-cycle-approval-and-docs.md`: exige sincronização de `README.md` + `docs/` e aprovação explícita do usuário antes de `git commit` e `git push`.
+- **Scripts Determinísticos em `.agents/scripts/`**:
+  - `validate-feature-name.sh`: valida nomes de pastas em `.specs/features/`.
+  - `quality-check.sh`: roda lint do projeto, executa `sonar-scanner` (local ou via Docker) e consulta deterministicamente o Quality Gate e issues na API do SonarQube local.
 - **Skills em `.agents/skills/`**:
   - `implement-spec-tasks`: runbook de 5 etapas para implementar uma feature aprovada a partir de `.specs/features/<feature>/tasks.md`.
   - `tlc-spec-driven`: ciclo Specify → Design → Tasks → Execute + scripts determinísticos de validação.
@@ -25,9 +29,11 @@ O Antigravity descobre nativamente `AGENTS.md`, `.agents/rules/*.md` e `.agents/
 
 *(Opcional)* Para espelhar também para outros harnesses/IDEs, passe `--ides claude,cursor,windsurf` ou `--ides all`.
 
-### 2. Templates do Projeto (Criados apenas se não existirem)
+### 2. Templates e Ferramentas do Projeto (Criados apenas se não existirem)
 - `AGENTS.md`: estrutura base para descrever visão, stack, invariantes e comandos do projeto.
 - `.specs/STATE.md`: memória de decisões arquiteturais (`AD-NNN`) e `## Handoff` entre sessões.
+- `.sonarqube/docker-compose.yml`: SonarQube local (`lts-community`, porta `9000`) com persistência em volume local (`.sonarqube/volumes/`).
+- `sonar-project.properties`: configuração base do projeto para o scanner.
 
 > **Garantia de atualização segura**: rodar o update **nunca sobrescreve** seu `AGENTS.md`, `.specs/STATE.md`, `.specs/features/*` ou regras/skills customizadas criadas especificamente no projeto consumidor.
 
@@ -48,9 +54,11 @@ curl -fsSL https://raw.githubusercontent.com/tiaggofg/agent-spec-kit/main/script
 
 ### Opções úteis do `install.sh`
 - `--ides none|claude,cursor,windsurf|all`: espelha skills também para outros harnesses (padrão: `none`, mantendo apenas `.agents/` para Antigravity).
-- `--ref v1.1.0`: fixa uma tag ou branch específica.
+- `--up-sonar`: já sobe o container do SonarQube local ao final da instalação.
+- `--skip-tools`: pula a criação de `.sonarqube/` e `sonar-project.properties`.
+- `--ref v1.2.0`: fixa uma tag ou branch específica.
 - `--dry-run`: mostra o que seria atualizado sem alterar arquivos.
-- `--force-templates`: sobrescreve `AGENTS.md` e `.specs/STATE.md` com os templates do kit.
+- `--force-templates`: sobrescreve `AGENTS.md`, `.specs/STATE.md` e `sonar-project.properties` com os templates do kit.
 
 ---
 
