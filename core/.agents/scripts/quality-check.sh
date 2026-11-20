@@ -126,7 +126,7 @@ ensure_sonar_up() {
     echo "Starting local SonarQube via Docker Compose..."
     docker compose -f "$ROOT_DIR/.sonarqube/docker-compose.yml" up -d
     echo "Waiting for SonarQube to become UP at $SONAR_HOST_URL..."
-    for _ in $(seq 1 45); do
+    for _ in $(seq 1 90); do
       if sonar_is_up; then
         echo "OK: SonarQube is UP."
         return 0
@@ -177,7 +177,7 @@ run_sonar() {
     return 1
   fi
 
-  # Wait for Compute Engine task if report-task.txt exists
+  # Wait for Compute Engine task (via report-task.txt if present, otherwise via /api/ce/component)
   local report_task="$ROOT_DIR/.scannerwork/report-task.txt"
   if [[ -f "$report_task" ]]; then
     local ce_task_id
@@ -196,6 +196,34 @@ run_sonar() {
         sleep 2
       done
     fi
+  else
+    echo "Waiting for SonarQube Compute Engine task for $project_key..."
+    for _ in $(seq 1 30); do
+      local ce_json ce_state
+      ce_json="$(curl -fsS -u "${SONAR_AUTH_USER}:${SONAR_AUTH_PASS}" "${SONAR_HOST_URL}/api/ce/component?component=${project_key}")"
+      ce_state="$(python3 - "$ce_json" <<'PY'
+import json, sys
+data = json.loads(sys.argv[1])
+queue = data.get("queue") or []
+current = data.get("current") or {}
+if queue:
+    print("PENDING")
+elif current.get("status") in ("FAILED", "CANCELED"):
+    print("FAILED")
+elif current.get("status") == "SUCCESS":
+    print("SUCCESS")
+else:
+    print("PENDING")
+PY
+)"
+      if [[ "$ce_state" == "SUCCESS" ]]; then
+        break
+      elif [[ "$ce_state" == "FAILED" ]]; then
+        echo "ERROR: SonarQube CE task failed: $ce_json" >&2
+        return 1
+      fi
+      sleep 2
+    done
   fi
 
   # Deterministic query of Quality Gate & open issues

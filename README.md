@@ -36,7 +36,7 @@ O Antigravity descobre nativamente `AGENTS.md`, `.agents/rules/*.md` e `.agents/
 - `docs/`: estrutura padrão de documentação viva (Markdown + diagramas Mermaid + `docs/adr/` para Architecture Decision Records):
   - `docs/README.md`, `arquitetura-c4.md`, `modelo-dominio-e-dados.md`, `fluxos-e-sequencias.md`, `api-rest.md`, `seguranca-e-privacidade.md`, `deploy-e-ci-cd.md`
   - `docs/adr/README.md` e `docs/adr/0000-template.md`
-- `.sonarqube/docker-compose.yml`: SonarQube local (`lts-community`, porta `9000`) com persistência em volume local (`.sonarqube/volumes/`).
+- `.sonarqube/docker-compose.yml`: SonarQube local (`lts-community`, porta `9000`) com persistência em named volumes do Docker (`sonarqube_data`, `sonarqube_logs`, `sonarqube_extensions`).
 - `sonar-project.properties`: configuração base do projeto para o scanner.
 - `.github/workflows/release.yml`, `release-please-config.json`, `.release-please-manifest.json`: automação via **Release Please** para gerar `CHANGELOG.md`, bump de versão e GitHub Release automaticamente a partir dos Conventional Commits. *(No GitHub, habilite `Settings → Actions → General → Allow GitHub Actions to create and approve pull requests`.)*
 
