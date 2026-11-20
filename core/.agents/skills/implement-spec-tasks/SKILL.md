@@ -9,25 +9,28 @@ description: >-
 
 # Implement Spec Tasks
 
-Execute este runbook ao iniciar uma sessão responsável por implementar uma spec aprovada em `.specs/features/<feature>/`.
+Execute este runbook (via `/implement-spec-tasks` ou `/implement-spec-tasks <feature> [tasks]`) ao iniciar uma nova sessão responsável por implementar uma spec aprovada em `.specs/features/<feature>/`.
 
 ---
 
 ## Etapa 1 — Carregar Contexto Obrigatório (Antes de Editar Código)
 
-Leia **na ordem abaixo** apenas os trechos necessários para a feature:
+1. **Identificar a Feature e Escopo**:
+   - Se o usuário informou `<feature>` (e opcionalmente tasks específicas, ex.: `T1..T3`), use esse escopo.
+   - Caso contrário, leia `.specs/STATE.md` (`## Handoff`) para identificar a feature ativa e implemente todas as tasks pendentes (`- [ ]`).
+   - Se a feature não estiver clara ou não houver tasks pendentes, liste as features em `.specs/features/` que possuem pendências e pergunte ao usuário qual executar.
 
-1. **Estado & Handoff (`.specs/`)**:
-   - `.specs/STATE.md`: leia as decisões arquiteturais ativas (`AD-001`..`AD-NNN`) e a seção `## Handoff` para identificar a feature ativa.
-   - `.specs/features/<feature>/spec.md`: leia integralmente o Problem Statement, Goals, Out of Scope, Decisões, Contratos e Critérios de Aceitação (EARS).
+2. **Estado, Spec & Plano (`.specs/`)** — leia **na ordem abaixo** apenas os trechos necessários:
+   - `.specs/STATE.md`: leia as decisões arquiteturais ativas (`AD-001`..`AD-NNN`) e a seção `## Handoff`.
+   - `.specs/features/<feature>/spec.md`: leia integralmente o Problem Statement, Goals, Out of Scope, Decisões, Contratos e Critérios de Aceitação (EARS). **Confirme que `spec.md` está aprovada** (`**Status**: Approved`); caso contrário, pare e peça aprovação antes de editar código.
    - `.specs/features/<feature>/design.md` (se existir): leia a arquitetura e decisões de componentes da feature.
    - `.specs/features/<feature>/tasks.md`: mapeie todas as tasks, dependências, testes e critérios de verificação.
 
-2. **Regras e Arquitetura do Projeto**:
+3. **Regras e Arquitetura do Projeto**:
    - `AGENTS.md`: leia o contexto arquitetural, stack, invariantes críticas e comandos de build/teste do repositório.
    - `docs/` (se existir): leia os documentos técnicos relevantes ao escopo da task (arquitetura, modelo de dados, fluxos, API, segurança, deploy).
 
-3. **Código-Fonte Relacionado**:
+4. **Código-Fonte Relacionado**:
    - Localize os módulos, endpoints, componentes e testes existentes que serão tocados antes de propor ou escrever código novo.
 
 ---

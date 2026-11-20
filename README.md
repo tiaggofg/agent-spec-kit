@@ -21,7 +21,7 @@ O Antigravity descobre nativamente `AGENTS.md`, `.agents/rules/*.md` e `.agents/
   - `validate-commit-msg.sh`: valida Angular Conventional Commits (título `<= 60` chars + body obrigatório); instalado também em `.git/hooks/commit-msg` quando o repo ainda não possui esse hook.
   - `quality-check.sh`: roda lint do projeto, executa `sonar-scanner` (local ou via Docker) e consulta deterministicamente o Quality Gate e issues na API do SonarQube local.
 - **Skills em `.agents/skills/`**:
-  - `implement-spec-tasks`: runbook de 5 etapas para implementar uma feature aprovada a partir de `.specs/features/<feature>/tasks.md`.
+  - `implement-spec-tasks` (`/implement-spec-tasks`): comando/runbook reutilizável em 5 etapas para iniciar uma nova sessão de implementação a partir de `.specs/STATE.md` (`## Handoff`) e `.specs/features/<feature>/tasks.md` (aceita opcionalmente `<feature>` e tasks específicas).
   - `tlc-spec-driven`: ciclo Specify → Design → Tasks → Execute + scripts determinísticos de validação.
   - `grill-me` / `grilling`: entrevista estruturada para destrinchar decisões e requisitos antes de codar.
   - `domain-analysis` & `tactical-ddd`: modelagem de domínio e DDD tático.
@@ -91,7 +91,7 @@ Para testar/atualizar a partir de um clone local antes de dar push:
 ## Fluxo Recomendado no Antigravity
 
 1. **Planejar (`tlc-spec-driven` + `grill-me`)**: discuta requisitos, gere `.specs/features/<feature>/spec.md` e `tasks.md`, aprove a spec e atualize `.specs/STATE.md` (`## Handoff`).
-2. **Nova Sessão de Implementação (`implement-spec-tasks`)**: inicie uma nova conversa pedindo para executar as tasks da feature em `.specs/STATE.md`.
+2. **Nova Sessão de Implementação (`/implement-spec-tasks`)**: inicie uma nova conversa e execute `/implement-spec-tasks` (ou `/implement-spec-tasks <feature> [tasks]`) para carregar o handoff em `.specs/STATE.md` e executar as tasks.
 3. **Validação Obrigatória**: o agente roda testes automatizados + verificação real (Playwright MCP / subagente `browser` ou HTTP requests) e atualiza `README.md` / `docs/`.
 4. **Aprovação e Push**: após sua confirmação explícita, o agente faz `git commit` e `git push`.
 

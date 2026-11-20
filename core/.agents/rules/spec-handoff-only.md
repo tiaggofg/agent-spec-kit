@@ -14,4 +14,4 @@ Quando uma especificação em `.specs/features/<feature>/spec.md` for aprovada p
    - Garantir que `spec.md` esteja com `**Status**: Approved` (registrando data e palavras de aprovação do usuário).
    - Garantir que `tasks.md` exista em `.specs/features/<feature>/tasks.md` com todas as tasks pendentes (`- [ ]`).
    - Atualizar a seção `## Handoff` de `.specs/STATE.md` apontando para a feature aprovada e as tasks prontas para execução.
-   - Encerrar a resposta informando os caminhos dos artefatos gerados e fornecendo um **prompt pronto para o usuário iniciar uma nova sessão** que implementará as tasks utilizando a skill `implement-spec-tasks` (`.agents/skills/implement-spec-tasks/SKILL.md`).
+   - Encerrar a resposta informando os caminhos dos artefatos gerados e orientando o usuário a abrir uma **nova sessão** executando o comando/skill reutilizável `/implement-spec-tasks <feature>` (ou apenas `/implement-spec-tasks`, que lê automaticamente a feature ativa em `.specs/STATE.md` e executa `.agents/skills/implement-spec-tasks/SKILL.md`).
