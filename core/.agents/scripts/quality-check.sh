@@ -160,7 +160,13 @@ run_sonar() {
 
   local auth_args=()
   if [[ -n "${SONAR_TOKEN:-}" ]]; then
-    auth_args+=("-Dsonar.token=${SONAR_TOKEN}")
+    local sonar_major
+    sonar_major="$(curl -fsS "${SONAR_HOST_URL}/api/system/status" 2>/dev/null | sed -nE 's/.*"version":"([0-9]+)\..*/\1/p' | head -n 1 || true)"
+    if [[ -n "$sonar_major" && "$sonar_major" -ge 10 ]] 2>/dev/null; then
+      auth_args+=("-Dsonar.token=${SONAR_TOKEN}")
+    else
+      auth_args+=("-Dsonar.login=${SONAR_TOKEN}")
+    fi
   else
     auth_args+=("-Dsonar.login=${SONAR_AUTH_USER}" "-Dsonar.password=${SONAR_AUTH_PASS}")
   fi
