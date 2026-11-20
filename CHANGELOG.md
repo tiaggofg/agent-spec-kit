@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.4.0] - 2026-11-20
+
+### Added
+- **Structured `docs/` & ADR templates**: added `templates/docs/` (`README.md`, `arquitetura-c4.md`, `modelo-dominio-e-dados.md`, `fluxos-e-sequencias.md`, `api-rest.md`, `seguranca-e-privacidade.md`, `deploy-e-ci-cd.md` with Mermaid diagram scaffolds) and `templates/docs/adr/` (`README.md`, `0000-template.md`), synced on install only when missing.
+- Updated `.agents/rules/post-cycle-approval-and-docs.md` to enforce the `docs/` + Mermaid + `docs/adr/` documentation standard.
+
 ## [1.3.0] - 2026-11-20
 
 ### Added

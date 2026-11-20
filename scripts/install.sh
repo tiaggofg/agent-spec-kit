@@ -240,6 +240,12 @@ copy_template_if_missing() {
 copy_template_if_missing "$KIT_DIR/templates/AGENTS.md" "$TARGET_DIR/AGENTS.md"
 copy_template_if_missing "$KIT_DIR/templates/.specs/STATE.md" "$TARGET_DIR/.specs/STATE.md"
 
+for doc in "$KIT_DIR"/templates/docs/*.md "$KIT_DIR"/templates/docs/adr/*.md; do
+  [[ -e "$doc" ]] || continue
+  rel_doc="${doc#"$KIT_DIR/templates/"}"
+  copy_template_if_missing "$doc" "$TARGET_DIR/$rel_doc"
+done
+
 if [[ "$SKIP_TOOLS" != "true" ]]; then
   copy_template_if_missing "$KIT_DIR/templates/.sonarqube/docker-compose.yml" "$TARGET_DIR/.sonarqube/docker-compose.yml"
   copy_template_if_missing "$KIT_DIR/templates/.sonarqube/.gitignore" "$TARGET_DIR/.sonarqube/.gitignore"

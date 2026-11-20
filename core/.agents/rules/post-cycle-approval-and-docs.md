@@ -6,12 +6,17 @@ trigger: always_on
 
 Ao finalizar qualquer ciclo completo de implementação, refatoração ou alteração de infraestrutura/CI/CD:
 
-## 1. Sincronização Obrigatória da Documentação
-Antes de solicitar aprovação ou realizar qualquer `git push`, revise e atualize o `README.md` e a documentação técnica em `docs/` (se existir no projeto) para manter a documentação 100% sincronizada com o código:
-- **Arquitetura e Dados**: atualize diagramas, entidades, modelos, índices e máquinas de estado caso haja novos componentes, campos ou coleções/tabelas.
-- **Fluxos e Regras de Negócio**: atualize fluxogramas, sequências e descrições de algoritmos/regras caso fluxos de UI ou regras tenham mudado.
-- **Contratos de API e Segurança**: atualize endpoints, DTOs, status HTTP e políticas de autenticação/privacidade quando alterados.
-- **Setup e Deploy**: atualize instruções de execução local, variáveis de ambiente, Docker/Compose ou workflows de CI/CD quando alterados.
+## 1. Sincronização Obrigatória da Documentação (`README.md`, `docs/`, Mermaid e ADRs)
+Antes de solicitar aprovação ou realizar qualquer `git push`, revise e atualize o `README.md` e a documentação técnica em `docs/` para manter tudo 100% sincronizado com o código:
+- **Estrutura padrão de `docs/`** (diagramas sempre em **Mermaid** dentro do Markdown):
+  - `docs/README.md`: índice geral e princípios arquiteturais.
+  - `docs/arquitetura-c4.md`: diagramas C4 (Contexto, Containers, Componentes) e fronteiras de camadas.
+  - `docs/modelo-dominio-e-dados.md`: `classDiagram`, `erDiagram` (tabelas/coleções/índices) e `stateDiagram-v2`.
+  - `docs/fluxos-e-sequencias.md`: `flowchart` de jornadas e `sequenceDiagram` dos fluxos principais.
+  - `docs/api-rest.md`: endpoints, autenticação, DTOs e códigos de erro.
+  - `docs/seguranca-e-privacidade.md`: autenticação, autorização, hashing/criptografia e sigilo.
+  - `docs/deploy-e-ci-cd.md`: execução local, Docker/Compose e pipelines CI/CD.
+  - `docs/adr/NNNN-titulo.md` (+ `docs/adr/README.md`): ADRs formais para decisões arquiteturais duradouras, mantendo o resumo ativo sincronizado em `.specs/STATE.md` (`## Decisions`).
 
 ## 2. Padrão Obrigatório de Mensagem de Commit (Angular Conventional Commits)
 Todo commit **DEVE** seguir o padrão **Conventional Commits (Angular)**:
