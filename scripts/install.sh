@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DEFAULT_REPO="git@github.com:tiaggofg/agent-spec-kit.git"
+DEFAULT_REPO="https://github.com/tiaggofg/agent-spec-kit.git"
 DEFAULT_REF="main"
 DEFAULT_IDES="none"
 
@@ -251,7 +251,7 @@ CONFIG_FILE="$TARGET_DIR/.spec-kit.json"
 REPO_URL="$(sed -nE 's/.*"repo"[[:space:]]*:[[:space:]]*"([^"]*)".*/\1/p' "$CONFIG_FILE" | head -n 1)"
 REF="$(sed -nE 's/.*"ref"[[:space:]]*:[[:space:]]*"([^"]*)".*/\1/p' "$CONFIG_FILE" | head -n 1)"
 
-REPO_URL="${REPO_URL:-git@github.com:tiaggofg/agent-spec-kit.git}"
+REPO_URL="${REPO_URL:-https://github.com/tiaggofg/agent-spec-kit.git}"
 REF="${REF:-main}"
 
 LOCAL_KIT=""

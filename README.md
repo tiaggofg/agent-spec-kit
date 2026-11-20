@@ -35,21 +35,13 @@ O Antigravity descobre nativamente `AGENTS.md`, `.agents/rules/*.md` e `.agents/
 
 ## Como Instalar em um Projeto Novo ou Existente
 
-### Opção A — Via Repositório Remoto (GitHub)
 Na raiz do projeto destino:
 
-```bash
-git clone --depth 1 git@github.com:tiaggofg/agent-spec-kit.git /tmp/agent-spec-kit && \
-  bash /tmp/agent-spec-kit/scripts/install.sh --target . && \
-  rm -rf /tmp/agent-spec-kit
-```
-
-*(Se o repositório estiver público, também funciona via HTTPS/`curl`)*:
 ```bash
 curl -fsSL https://raw.githubusercontent.com/tiaggofg/agent-spec-kit/main/scripts/install.sh | bash
 ```
 
-### Opção B — Via Clone Local
+*(Opcional)* **Via Clone Local**:
 ```bash
 /caminho/para/agent-spec-kit/scripts/install.sh --target /caminho/para/seu-projeto
 ```
